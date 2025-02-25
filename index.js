@@ -1,35 +1,27 @@
 function addSum(a) {
     try {
-        if (a === "") {
-            return 0;
-        }
+        if (!a || typeof a !== "string") return a === "" ? 0 : "Input must be a string";
 
-        if (typeof a !== "string") {
-            throw new Error("Input must be a string");
-        }
+        let [delimiter, numbersStr] = a.startsWith('//') ? 
+            [a.substring(2, a.indexOf('\n')), a.substring(a.indexOf('\n') + 1)] : 
+            [',', a];
 
-        const numbers = a.split(',').map(num => {
-            const parsed = parseFloat(num.trim());
-            if (isNaN(parsed)) {
-                throw new Error("Invalid number format");
-            }
-            if (parsed === 0) {
-                throw new Error("Number cannot be 0");
-            }
-            if (parsed < 0) {
-                throw new Error("Number cannot be negative");
-            }
-            return parsed;
-        });
+        const numbers = numbersStr.split(new RegExp(`[${delimiter}\\n]`))
+            .map(n => {
+                const p = parseFloat(n.trim());
+                if (isNaN(p)) throw new Error("Invalid number format");
+                if (p === 0) throw new Error("Number cannot be 0");
+                return p;
+            });
 
-        const sum = numbers.reduce((acc, curr) => acc + curr, 0);
-        return sum;
+        const negs = numbers.filter(n => n < 0);
+        if (negs.length) throw new Error(`negative numbers not allowed ${negs.join(',')}`);
 
-    } catch (error) {
-        console.log(error);
-        return error.message;
+        return numbers.reduce((a, c) => a + c, 0);
+    } catch (e) {
+        console.log(e);
+        return e.message;
     }
 }
 
-console.log(addSum("1,2,3,4,5"));
-
+console.log(addSum("1,2,3,4,-5"));

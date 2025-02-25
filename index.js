@@ -31,5 +31,5 @@ function addSum(a) {
     }
 }
 
-console.log(addSum(1, 2));
+console.log(addSum("1,2,3,4,5"));
 
